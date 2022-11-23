@@ -37,9 +37,9 @@ public class ProdutosController {
     }
 
     @PostMapping
-    public ResponseEntity<Produto> insert(@RequestBody Produto produto){
+    public ResponseEntity<ProdutoDTO> insert(@RequestBody Produto produto){
         try {
-            Produto p = produtoService.save(produto);
+            ProdutoDTO p = produtoService.salvarProduto(produto);
             return new ResponseEntity<>(p, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

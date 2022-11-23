@@ -23,12 +23,13 @@ public class ProdutoService {
         return produtoRepository.findById(id);
     }
 
-    public Produto save(Produto p) {
-        return produtoRepository.save(p);
-    }
-
     public Produto update(Long id, String nome, String descricao, double preco) {
         return produtoRepository.updateProduto(nome, descricao, preco,id);
+    }
+
+    public ProdutoDTO salvarProduto(Produto p) {
+        var produto = this.produtoRepository.save(p);
+        return produto.getProdutoDTO();
     }
 
     public void deleteById(Long id){

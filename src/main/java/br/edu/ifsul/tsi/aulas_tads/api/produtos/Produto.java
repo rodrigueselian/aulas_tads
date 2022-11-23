@@ -1,7 +1,6 @@
 package br.edu.ifsul.tsi.aulas_tads.api.produtos;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "produto")
@@ -13,7 +12,7 @@ public class Produto {
     private Long id;
     @Column(name = "nome", nullable = false)
     private String nome;
-    @Column(name = "descricao", nullable = false)
+    @Column(name = "descricao")
     private String descricao;
     @Column(name = "preco", scale = 2, nullable = false)
     private double preco;
@@ -44,12 +43,16 @@ public class Produto {
         return descricao;
     }
 
-    public void setDescricao(String desc) {
+    public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
 
     public double getPreco() {
         return preco;
+    }
+
+    public ProdutoDTO getProdutoDTO(){
+        return new ProdutoDTO(this.id, this.nome, this.descricao);
     }
 
     public void setPreco(double preco) {
