@@ -27,8 +27,8 @@ public class ProdutoService {
         return produtoRepository.save(p);
     }
 
-    public Produto update(Long id, Produto p) {
-        return produtoRepository.updateProduto(p,id);
+    public Produto update(Long id, String nome, String descricao, double preco) {
+        return produtoRepository.updateProduto(nome, descricao, preco,id);
     }
 
     public void deleteById(Long id){
