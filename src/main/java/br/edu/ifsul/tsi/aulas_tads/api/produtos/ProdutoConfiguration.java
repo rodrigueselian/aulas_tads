@@ -10,7 +10,6 @@ import java.util.List;
 
 @Configuration
 public class ProdutoConfiguration {
-
     @Bean
     CommandLineRunner commandLineRunner(ProdutoRepository produtoRepository) {
         return args -> {
