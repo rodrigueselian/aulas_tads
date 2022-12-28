@@ -1,5 +1,7 @@
 package br.edu.ifsul.tsi.aulas_tads.api.produtos;
 
+import org.modelmapper.ModelMapper;
+
 import javax.persistence.*;
 
 @Entity
@@ -57,5 +59,10 @@ public class Produto {
 
     public void setPreco(double preco) {
         this.preco = preco;
+    }
+
+    public static Produto create(ProdutoDTO p){
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(p, Produto.class);
     }
 }

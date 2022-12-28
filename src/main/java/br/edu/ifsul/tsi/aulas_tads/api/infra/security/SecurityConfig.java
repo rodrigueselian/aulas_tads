@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .authorizeRequests()//Qualquer request requer autenticação
-            .antMatchers(HttpMethod.POST, "/api/v1/login").permitAll() //porém, esse path é exceção
+            .antMatchers(HttpMethod.POST, "/api/login").permitAll() //porém, esse path é exceção
             .antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**")
             .permitAll()
             .anyRequest().authenticated() //qualquer requeste deve ser autenticada

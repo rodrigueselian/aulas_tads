@@ -1,8 +1,8 @@
 package br.edu.ifsul.tsi.aulas_tads.api.produtos;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,14 +23,34 @@ public class ProdutoService {
         return produtoRepository.findById(id);
     }
 
-    public Produto update(Long id, String nome, String descricao, double preco) {
-        return produtoRepository.updateProduto(nome, descricao, preco,id);
+    public ProdutoDTO update(Produto produto, Long id) {
+        Assert.notNull(id,"Não foi possível atualizar o registro");
+
+        // Busca o produto no banco de dados
+        Optional<Produto> optional = produtoRepository.findById(id);
+        if(optional.isPresent()) {
+            Produto db = optional.get();
+            // Copiar as propriedades
+            db.setNome(produto.getNome());
+            db.setDescricao(produto.getDescricao());
+            db.setPreco(produto.getPreco());
+            System.out.println("Produto id " + db.getId());
+
+            // Atualiza o produto
+            produtoRepository.save(db);
+
+            return ProdutoDTO.create(db);
+        } else {
+            return null;
+            //throw new RuntimeException("Não foi possível atualizar o registro");
+        }
     }
 
     public ProdutoDTO salvarProduto(Produto p) {
         var produto = this.produtoRepository.save(p);
         return produto.getProdutoDTO();
     }
+
 
     public void deleteById(Long id){
         produtoRepository.deleteById(id);

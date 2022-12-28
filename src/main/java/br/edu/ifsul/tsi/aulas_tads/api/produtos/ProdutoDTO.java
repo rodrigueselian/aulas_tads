@@ -1,5 +1,7 @@
 package br.edu.ifsul.tsi.aulas_tads.api.produtos;
 
+import org.modelmapper.ModelMapper;
+
 public class ProdutoDTO {
     private Long id;
 
@@ -35,5 +37,10 @@ public class ProdutoDTO {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public static ProdutoDTO create(Produto p){
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(p, ProdutoDTO.class);
     }
 }

@@ -47,9 +47,9 @@ public class ProdutosController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Produto> update(@PathVariable("id") Long id, @RequestBody Produto produto){
+    public ResponseEntity<ProdutoDTO> update(@PathVariable("id") Long id, @RequestBody Produto produto){
         try {
-            Produto p = produtoService.update(id,produto.getNome(), produto.getDescricao(), produto.getPreco());
+            ProdutoDTO p = produtoService.update(produto, id);
             return new ResponseEntity<>(p, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
