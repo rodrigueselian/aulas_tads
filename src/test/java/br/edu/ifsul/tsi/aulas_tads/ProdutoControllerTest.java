@@ -38,21 +38,21 @@ public class ProdutoControllerTest extends BaseAPITest {
 
     @Test
     public void selectAll() {
-        List<ProdutoDTO> produtos = getProdutos("/api/produtos").getBody();
+        List<ProdutoDTO> produtos = getProdutos("/api/v1/produtos").getBody();
         assertNotNull(produtos);
         assertEquals(5, produtos.size());
 
-        produtos = getProdutos("/api/produtos?page=0&size=5").getBody();
+        produtos = getProdutos("/api/v1/produtos?page=0&size=5").getBody();
         assertNotNull(produtos);
-        assertEquals(3, produtos.size());
+        assertEquals(5, produtos.size());
     }
 
     @Test
     public void selectByNome() {
 
-        assertEquals(1, getProdutos("/api/produtos/nome/arroz").getBody().size());
-        assertEquals(1, getProdutos("/api/produtos/nome/cafe").getBody().size());
-        assertEquals(1, getProdutos("/api/produtos/nome/feijao").getBody().size());
+        assertEquals(1, getProdutos("/api/v1/produtos/nome/Frango com batata").getBody().size());
+        assertEquals(1, getProdutos("/api/v1/produtos/nome/salada de batata").getBody().size());
+        assertEquals(1, getProdutos("/api/v1/produtos/nome/Escondidinho de batata com carne").getBody().size());
 
         assertEquals(HttpStatus.NO_CONTENT, getProdutos("/api/v1/produtos/nome/xxx").getStatusCode());
     }
@@ -60,23 +60,25 @@ public class ProdutoControllerTest extends BaseAPITest {
     @Test
     public void selectById() {
 
-        assertNotNull(getProduto("/api/produtos/1"));
-        assertNotNull(getProduto("/api/produtos/2"));
-        assertNotNull(getProduto("/api/produtos/3"));
+        assertNotNull(getProduto("/api/v1/produtos/1"));
+        assertNotNull(getProduto("/api/v1/produtos/2"));
+        assertNotNull(getProduto("/api/v1/produtos/3"));
 
-        assertEquals(HttpStatus.NOT_FOUND, getProduto("/api/produtos/1000").getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, getProduto("/api/v1/produtos/1000").getStatusCode());
     }
 
     @Test
     public void testInsert() {
 
         Produto produto = new Produto();
-        produto.setDescricao("Memoria Ram Adicionada no teste");
-        produto.setPreco(50);
-        produto.setNome("Memoria Ram");
+        produto.setCalorias(new BigDecimal("900"));
+        produto.setEstoque(100L);
+        produto.setNome("Macarrao com creme de batata");
+        produto.setVegano(true);
+        produto.setPreco(new BigDecimal("14.90"));
 
         // Insert
-        ResponseEntity response = post("/api/produtos", produto, null);
+        ResponseEntity response = post("/api/v1/produtos", produto, null);
         System.out.println(response);
 
         // Verifica se criou
@@ -87,7 +89,8 @@ public class ProdutoControllerTest extends BaseAPITest {
         ProdutoDTO p = getProduto(location).getBody();
 
         assertNotNull(p);
-        assertEquals("Memoria", p.getNome());
+        assertEquals("Macarrao com creme de batata", p.getNome());
+        assertEquals(Long.valueOf(100), p.getEstoque());
 
         // Deletar o objeto
         delete(location, null);
@@ -100,12 +103,14 @@ public class ProdutoControllerTest extends BaseAPITest {
     public void testUpdate() {
         //primeiro insere o objeto
         Produto produto = new Produto();
-        produto.setDescricao("Memoria Ram Adicionada no teste");
-        produto.setPreco(100);
-        produto.setNome("Memoria Ram");
+        produto.setCalorias(new BigDecimal(400));
+        produto.setEstoque(100L);
+        produto.setNome("Chocolate");
+        produto.setVegano(false);
+        produto.setPreco(new BigDecimal(6.90));
 
         // Insert
-        ResponseEntity response = post("/api/produtos", produto, null);
+        ResponseEntity response = post("/api/v1/produtos", produto, null);
         System.out.println(response);
 
         // Verifica se criou
@@ -116,16 +121,18 @@ public class ProdutoControllerTest extends BaseAPITest {
         ProdutoDTO p = getProduto(location).getBody();
 
         assertNotNull(p);
-        assertEquals("Memoria", p.getNome());
+        assertEquals("Chocolate", p.getNome());
+        assertEquals(Long.valueOf(100), p.getEstoque());
 
         //depois altera seu valor
         Produto pa = Produto.create(p);
-        pa.setPreco(500);
+        pa.setNome("Chocolate Vegano");
+        pa.setVegano(true);
 
         // Update
-        response = put("/api/produtos/" + p.getId(), pa, null);
+        response = put("/api/v1/produtos/" + p.getId(), pa, null);
         System.out.println(response);
-        assertEquals(Long.valueOf(500), pa.getPreco());
+        assertEquals("Chocolate Vegano", pa.getNome());
 
         // Deletar o objeto
         delete(location, null);
@@ -142,7 +149,7 @@ public class ProdutoControllerTest extends BaseAPITest {
 
     @Test
     public void testGetNotFound() {
-        ResponseEntity response = getProduto("/api/produtos/1100");
+        ResponseEntity response = getProduto("/api/v1/produtos/1100");
         assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 }

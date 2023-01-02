@@ -1,43 +1,56 @@
 package br.edu.ifsul.tsi.aulas_tads.api.produtos;
 
+import br.edu.ifsul.tsi.aulas_tads.api.infra.security.exception.ObjectNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProdutoService {
 
-    private final ProdutoRepository produtoRepository;
+    @Autowired
+    private ProdutoRepository rep;
 
-    public ProdutoService(ProdutoRepository produtoRepository) {
-        this.produtoRepository = produtoRepository;
+    public List<ProdutoDTO> getProdutos() {
+        return rep.findAll().stream().map(ProdutoDTO::create).collect(Collectors.toList());
     }
 
-    public List<Produto> findAll(){
-        return produtoRepository.findAll();
+    public ProdutoDTO getProdutoById(Long id) {
+        Optional<Produto> produto = rep.findById(id);
+        return produto.map(ProdutoDTO::create).orElseThrow(() -> new ObjectNotFoundException("Produto não encontrado"));
     }
 
-    public Optional<Produto> findById(Long id) {
-        return produtoRepository.findById(id);
+    public List<ProdutoDTO> getProdutosByNome(String nome) {
+        return rep.findByNome(nome).stream().map(ProdutoDTO::create).collect(Collectors.toList());
+    }
+
+    public ProdutoDTO insert(Produto produto) {
+        Assert.isNull(produto.getId(),"Não foi possível inserir o registro");
+
+        return ProdutoDTO.create(rep.save(produto));
     }
 
     public ProdutoDTO update(Produto produto, Long id) {
         Assert.notNull(id,"Não foi possível atualizar o registro");
 
         // Busca o produto no banco de dados
-        Optional<Produto> optional = produtoRepository.findById(id);
+        Optional<Produto> optional = rep.findById(id);
         if(optional.isPresent()) {
             Produto db = optional.get();
             // Copiar as propriedades
             db.setNome(produto.getNome());
-            db.setDescricao(produto.getDescricao());
+            db.setCalorias(produto.getCalorias());
             db.setPreco(produto.getPreco());
+            db.setEstoque(produto.getEstoque());
+            db.setVegano(produto.getVegano());
             System.out.println("Produto id " + db.getId());
 
             // Atualiza o produto
-            produtoRepository.save(db);
+            rep.save(db);
 
             return ProdutoDTO.create(db);
         } else {
@@ -46,17 +59,7 @@ public class ProdutoService {
         }
     }
 
-    public ProdutoDTO salvarProduto(Produto p) {
-        var produto = this.produtoRepository.save(p);
-        return produto.getProdutoDTO();
-    }
-
-
-    public void deleteById(Long id){
-        produtoRepository.deleteById(id);
-    }
-
-    public Optional<Produto> findByNome(String nome) {
-        return produtoRepository.findByNome(nome);
+    public void delete(Long id) {
+        rep.deleteById(id);
     }
 }
